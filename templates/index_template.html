@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="static/style.css">
+    <title>{{ config.blog_title }}</title>
+</head>
+<body>
+    <h1>{{ config.blog_title }}</h1>
+    <p>Author: {{ config.author }}</p>
+    <p>{{ config.description }}</p>
+
+    {% for post in posts %}
+        <h2><a href="{{ 'posts/' + post.id + '.html' }}">{{ post.id }}</a></h2>
+        {{ post.content|safe }}
+        <!-- Last updated timestamp -->
+        <p>Last updated: {{ post.last_updated }}</p>
+    {% endfor %}
+</body>
+</html>
+
