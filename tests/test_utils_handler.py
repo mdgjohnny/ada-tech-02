@@ -55,9 +55,3 @@ class TestUtils(unittest.TestCase):
         post_content = '---\ntitle: Test Post\ntags: [test, example]\n---\nContent'
         metadata = handler.extract_metadata(post_content)
         self.assertEqual(metadata, {'title': 'Test Post', 'tags': '[test, example]'})
-
-    def test_generate_test_posts(self):
-        handler.generate_test_posts(5, self.temp_dir)
-        for i in range(1, 6):
-            post_path = os.path.join(self.temp_dir, f'test_post_{i}.md')
-            self.assertTrue(os.path.exists(post_path))

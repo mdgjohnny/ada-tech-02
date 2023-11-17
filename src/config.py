@@ -1,6 +1,6 @@
 config_file = 'config.json'
 config_keys = [
-    'source_directory',
+    'posts_directory',
     'backup_directory',
     'file_extensions',
     'blog_title',

@@ -90,8 +90,9 @@ class TestGeneratePages(unittest.TestCase):
     def test_process_post(self):
         processed_posts = []
         for post in self.generated_posts:
-            post_path = os.path.join(self.test_dir, post['id'] + '.md')
-            post_title = post['title']
+            post_id = post['id']
+            test_post_name = f'test_post_{post_id}.md'
+            post_path = os.path.join(self.test_dir, test_post_name)
             processed_post = process_post(post_path)
             processed_posts.append(processed_post)
         for processed_post, original_post in zip(processed_posts, self.generated_posts):
