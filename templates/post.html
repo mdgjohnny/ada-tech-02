@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="static/style.css">
+    <title>{{ post.title }}</title>
+</head>
+<body>
+    <h1>{{ post.title }}</h1>
+    <p>Author: {{ config.author }}</p>
+    <p>{{ post.content|safe }}</p>
+    <p>Last updated: {{ post.last_updated }}</p>
+    <nav>
+        <a href="{{ navigation_links.index }}">Index</a>
+        <a href="{{ navigation_links.archive }}">Archive</a>
+        <a href="{{ navigation_links.tags }}">Tags</a>
+    </nav>
+</body>
+</html>

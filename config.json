@@ -2,7 +2,7 @@
         "blog_title": "A test",
         "author": "Johnny",
         "description": "A little project for ADA",
-        "source_directory": "pages",
+        "posts_directory": "pages",
         "backup_directory": "backup",
         "file_extensions": ["md"]
 }

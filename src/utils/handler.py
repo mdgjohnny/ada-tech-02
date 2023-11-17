@@ -3,10 +3,16 @@ import re
 import hashlib
 import shelve
 import json
+from src.config import (
+    posts_dir,
+    backup_dir,
+    fallback_extensions,
+    template_directory,
+    template_filename,
+)
+from functools import lru_cache
+from jinja2 import Environment, FileSystemLoader
 
-DEFAULT_SOURCE_DIR = 'posts'
-DEFAULT_BACKUP_DIR = 'backup'
-FALLBACK_EXTENSIONS = ['.md']
 
 def create_directory(directory_path):
     # Check if the directory exists, if not, create it
@@ -54,14 +60,8 @@ def load_config(config_path):
     except json.JSONDecodeError:
         print(f"Error: Unable to decode JSON in '{config_path}'")
 
-def parse_config(config_dict=None, backup_dir=DEFAULT_BACKUP_DIR):
+def parse_config(config_dict=None, backup_dir=backup_dir):
     
-    def is_dir(dir_path):
-            return os.path.isdir(dir_path)
-
-    def path_to_dir(dir_path):
-            return os.path.abspath(dir_path)
-
     if config_dict is not None:
         config_data = config_dict
     parsed_config = {}
@@ -77,8 +77,8 @@ def parse_config(config_dict=None, backup_dir=DEFAULT_BACKUP_DIR):
                         print("Error: Invalid file extension: {}".format(ext))
             else:
                 print("Error: Invalid file extension list: {}".format(value))
-                print("Error: Using fallback file extensions: {}".format(FALLBACK_EXTENSIONS))
-                parsed_config['file_extensions'] = FALLBACK_EXTENSIONS
+                print("Error: Using fallback file extensions: {}".format(fallback_extensions))
+                parsed_config['file_extensions'] = fallback_extensions
         else:
             parsed_config[key] = value
             print("{}: {}".format(key, value))
@@ -102,3 +102,16 @@ def extract_metadata(post_content):
         return metadata
     else:
         return None
+
+
+@lru_cache(maxsize=None)
+def get_template(template_name=template_filename, template_directory=template_directory):
+    template_dir = os.path.abspath(template_directory)
+    try:
+        environment = Environment(loader=FileSystemLoader(template_dir))
+        template = environment.get_template(template_name)
+        return template
+    except FileNotFoundError:
+        print(f"Error: Template file '{template_name}' not found in directory '{template_dir}'.")
+    except Exception as e:
+        print(f"Error: Unable to load template '{template_name}': {e}")
