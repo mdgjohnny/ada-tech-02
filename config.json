@@ -10,7 +10,7 @@
     "file_extensions": [
         "md"
     ],
-    "hash_filename": "hash.db",
+    "hash_filename": "hash.json",
     "index_template": "index.html",
     "post_template": "post.html"
 }

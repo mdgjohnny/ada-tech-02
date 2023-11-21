@@ -81,16 +81,18 @@ def calculate_hash(root_directory, ignore_dirs=IGNORED_DIRECTORIES, ignore_files
 
     return hash_object.hexdigest()
 
-def load_old_hash():
-    with shelve.open('hash.db') as db:
-        return db.get('hash')
 
-def save_new_hash(new_hash):
-    with shelve.open('hash.db') as db:
-        if 'hash' in db:
-            del db['hash']
-        db['hash'] = new_hash
-        db.sync()
+def load_old_hash(path):
+    try:
+        with open(path, 'r') as f:
+            hash_db = json.load(f)
+    except FileNotFoundError:
+        hash_db = {}
+    return hash_db
+
+def save_new_hash(new_hash, path):
+    with open(path, 'w') as f:
+        json.dump(new_hash, f)
 
 def load_config(config_path):
     try:

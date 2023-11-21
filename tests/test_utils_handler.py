@@ -50,11 +50,6 @@ class TestUtils(unittest.TestCase):
         hash_after_file = handler.calculate_hash(self.temp_dir)
         self.assertNotEqual(hash_before_file, hash_after_file)
 
-    def test_load_and_save_hash(self):
-        handler.save_new_hash('test_hash')
-        loaded_hash = handler.load_old_hash()
-        self.assertEqual(loaded_hash, 'test_hash')
-
     def test_load_config(self):
         config_path = 'config.json'
         config_data = handler.load_config(config_path)

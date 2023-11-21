@@ -32,7 +32,7 @@ HASH_FILENAME = os.path.join(PROJECT_ROOT, parsed_config['hash_filename'])
 TEMPLATE_DIRECTORY = os.path.join(PROJECT_ROOT, parsed_config['template_directory'])
 
 # Set up logging
-logging.basicConfig(level=logging.ERROR)
+logging.basicConfig(level=logging.WARNING)
 logger = logging.getLogger(__name__)
 
 def write_page(output_filename, output_html):
@@ -303,6 +303,7 @@ def make_site(local_posts_directory=LOCAL_POSTS_DIRECTORY, public_dir=PUBLIC_DIR
     assert os.path.exists(public_posts_dir), f"Error: Public posts directory '{public_posts_dir}' not found."
     logger.info(f"Posts directory: {local_posts_directory}")
     hash_file = os.path.join(PROJECT_ROOT, HASH_FILENAME)
+    logger.info(f"Hash file: {hash_file}")
 
     try:
         posts = load_posts(local_posts_directory)
@@ -310,36 +311,50 @@ def make_site(local_posts_directory=LOCAL_POSTS_DIRECTORY, public_dir=PUBLIC_DIR
         logger.error(f"Error making site: {e}")
     except Exception as e:
         logger.error(f"Error making site: {e}")
+
+    dirs_to_check = [
+        LOCAL_POSTS_DIRECTORY, 
+        PUBLIC_DIR, 
+        PUBLIC_POSTS_DIR, 
+        TEMPLATE_DIRECTORY,
+    ]
+
+    def get_hashes_by_dir(dirs):
+        hashes = {}
+        for directory in dirs:
+            hashes[directory] = calculate_hash(directory)
+        return hashes
+
+    def has_site_changed():
+        dir_hashes = get_hashes_by_dir(dirs_to_check)
+        for directory, dir_hash in dir_hashes.items():
+            if not os.path.exists(directory):
+                logger.error(f"Error: Directory '{directory}' not found.")
+                raise FileNotFoundError(f"Error: Directory '{directory}' not found.")
+        if not os.path.exists(hash_file):
+            return True
+        else:
+            old_hash = load_old_hash(hash_file)
+            if any(dir_hashes[directory] != old_hash.get(directory, None) for directory in dirs_to_check):
+                return True
+            return False
+
     
     if posts is not None:
-        # Check if the hash file exists
-        if not os.path.exists(hash_file):
-            logger.info("Hash file not found. Generating pages...")
+        # Check if the site has changed
+        site_changed = has_site_changed()
+        if site_changed:
+            logger.info("Changes detected. Generating site...")
             # Generating site...
             try:
                 logger.info(f"Generating all posts in {local_posts_directory}...")
                 generate_all_posts(posts, public_dir, public_posts_dir)
                 logger.info(f"Generating pages in {local_posts_directory}...")
                 generate_pages(posts, posts_per_page, public_dir)
-                current_hash = calculate_hash(PROJECT_ROOT)
-                logger.warning(f"Current hash: {current_hash}")
-                save_new_hash(current_hash)
+                current_hashes = get_hashes_by_dir(dirs_to_check)
+                save_new_hash(current_hashes, hash_file)
                 logger.info("Pages generated successfully.")
             except Exception as e:
                 logger.error(f"Error generating site: {e}")
         else:
-            old_hash = load_old_hash()
-            logger.warning(f"Old hash: {old_hash}")
-            current_hash = calculate_hash(PROJECT_ROOT)
-            logger.warning(f"Current hash: {current_hash}")
-            if current_hash != old_hash:
-                logger.warning("Hash mismatch. Generating posts...")
-                posts = load_posts(local_posts_directory)
-                save_new_hash(current_hash)
-                logger.info(f"Generating all posts in {local_posts_directory}...")
-                generate_all_posts(posts, public_dir, public_posts_dir)
-                logger.info(f"Generating pages in {local_posts_directory}...")
-                generate_pages(posts, posts_per_page, public_dir)
-                logger.info("Pages generated successfully.")
-            else:
-                logger.info("Hash match. Skipping post generation.")
+            logger.info("No changes detected. Skipping post generation.")
