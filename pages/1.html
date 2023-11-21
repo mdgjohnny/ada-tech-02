@@ -87,36 +87,40 @@
             }
         }
     </style>
-    <title>{{ config.blog_title }}</title>
+    <title>altamira root</title>
 </head>
 
 <body>
     <header>
-        <h1>{{ config.blog_title }}</h1>
-        <p>Author: {{ config.author }}</p>
-        <p>{{ config.description }}</p>
+        <h1>altamira root</h1>
+        <p>Author: Johnny</p>
+        <p>a chronicle of curiosity</p>
     </header>
 
-    {% for post in posts %}
-        <h2><a href="{{ post.rel_path }}">{{ post.title }}</a></h2>
-        {{ post.content|safe }}
+    
+        <h2><a href="posts/random_testabilia.html">Random testabilia</a></h2>
+        <hr />
+
+<p>title: Random testabilia</p>
+
+<h2>tags: [test, random, test]</h2>
+
+<h1>No 1</h1>
+
+<p>This is a test.</p>
+
         <!-- Last updated timestamp -->
-        <p>Last updated: {{ post.last_updated }}</p>
-    {% endfor %}
+        <p>Last updated: 2023-11-19 15:53:34</p>
+    
 
     <div class="pagination">
-        {% if navigation_links is not none %}
-            {% if navigation_links.prev is not none %}
-                <a href="{{ navigation_links.prev }}">Previous</a>
-            {% endif %}
-            <span>Page {{ navigation_links.page }}</span>
-            {% if navigation_links.next is not none %}
-                <a href="{{ navigation_links.next }}">Next</a>
-            {% endif %}
-        {% endif %}
+        
+            
+            <span>Page </span>
+            
+        
     </div>
 </body>
 
 </html>
-
 

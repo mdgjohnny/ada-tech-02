@@ -1,5 +1,9 @@
-import unittest
+import sys
 import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+# print sys path
+print(sys.path)
+import unittest
 import random
 import time
 import shutil
@@ -8,20 +12,18 @@ import logging
 from src.generate_pages import (
     load_posts, 
     generate_pages,
-    get_template, 
+    get_template,
     write_page,
     process_post,
     generate_post,
 )
 from src.config import (
-    posts_dir,
-    backup_dir,
-    fallback_extensions,
-    template_directory,
-    template_filename,
+    parsed_config,
 )
 from bs4 import BeautifulSoup
 
+
+INDEX_TEMPLATE = parsed_config['index_template']
 
 class TestGeneratePages(unittest.TestCase):
 
@@ -44,6 +46,7 @@ class TestGeneratePages(unittest.TestCase):
             'file_extensions': ['.md']
         }
         self.generated_posts = self.generate_test_posts(self.post_amount, self.test_dir)
+        assert self.generated_posts is not None
 
     def tearDown(self):
         for temp_dir in self.temp_dirs:
@@ -58,8 +61,7 @@ class TestGeneratePages(unittest.TestCase):
                 print(f'Writing post {i} to {test_post_path}')
 
         generated_posts = load_posts(test_dir)
-
-        print(generated_posts)
+        print(f"{len(generated_posts)} posts generated at {test_dir}")
 
         return generated_posts
 
@@ -68,7 +70,7 @@ class TestGeneratePages(unittest.TestCase):
         project_root = os.path.dirname(tests_dir)
         template_dir = os.path.join(project_root, 'templates')
         self.logger.info(f'Template directory is: {template_dir}')
-        template = get_template(template_name=template_filename, template_directory=template_dir)
+        template = get_template(template_name=INDEX_TEMPLATE, template_directory=template_dir)
         # Log some information about the template
         self.logger.info(f'Template type: {type(template)}')
         self.logger.info(f'Template name: {template.name}')
@@ -85,14 +87,16 @@ class TestGeneratePages(unittest.TestCase):
         with open(output_filename, 'r') as output_file:
             content = output_file.read()
             self.assertEqual(content, output_html, "Content mismatch.")
-        os.remove(output_filename)
 
     def test_process_post(self):
+        posts = self.generated_posts
+        assert posts is not None, "No posts generated."
         processed_posts = []
-        for post in self.generated_posts:
-            post_id = post['id']
-            test_post_name = f'test_post_{post_id}.md'
+        for post in posts:
+            post_sanitized_title = post['sanitized_title']
+            test_post_name = f'{post_sanitized_title}.md'
             post_path = os.path.join(self.test_dir, test_post_name)
+            assert os.path.exists(post_path), f"Post {test_post_name} not found."
             processed_post = process_post(post_path)
             processed_posts.append(processed_post)
         for processed_post, original_post in zip(processed_posts, self.generated_posts):
@@ -108,15 +112,13 @@ class TestGeneratePages(unittest.TestCase):
         self.assertEqual(len(processed_posts), self.post_amount)
 
     def test_generate_post(self):
-        for post in self.generated_posts:
-            post_path = os.path.join(self.test_dir, post['id'] + '.html')
-            navigation_links = {
-                'index': 'index.html',
-                'archive': 'archive.html',
-                'tags': 'tags.html',
-            }
-            page_number = 1
-            generate_post(post, navigation_links, page_number, self.test_dir)
+        posts = self.generated_posts
+        for post in posts:
+            post_path = os.path.join(self.test_dir, post['sanitized_title'] + '.html')
+            assert os.path.exists(post_path) == False, f"Post {post_path} already exists."
+            print(f"Calling generate post with {post}")
+            generate_post(post, self.test_dir)
+            assert os.path.exists(post_path), f"Post {post_path} not found."
             self.assertTrue(os.path.exists(post_path))
 
             # Check if the post title, content, and navigation links are present in the HTML file
@@ -124,19 +126,20 @@ class TestGeneratePages(unittest.TestCase):
                 html_content = f.read()
                 self.assertIn(post['title'], html_content)
                 self.assertIn(post['content'], html_content)
-                self.assertIn(navigation_links['index'], html_content)
-                self.assertIn(navigation_links['archive'], html_content)
-                self.assertIn(navigation_links['tags'], html_content)
 
-            os.remove(post_path)
 
     def test_generate_pages(self):
-        generate_pages(self.test_dir, self.generated_posts, self.posts_per_page)
+        output_dir = os.path.join(self.test_dir, 'pages')
+        if not os.path.exists(output_dir):
+            os.mkdir(output_dir)
+        generate_pages(self.generated_posts, self.posts_per_page, output_dir)
         expected_pages = (self.post_amount + self.posts_per_page - 1) // self.posts_per_page
         self.logger.info(f"Expected pages: {expected_pages}")
-        files_in_dir = os.listdir(self.test_dir)
+        files_in_dir = os.listdir(output_dir)
+        assert files_in_dir != [], "No files in directory."
         self.logger.info(f"Files in directory: {files_in_dir}")
-        generated_pages = [name for name in os.listdir(self.test_dir) if name.endswith('.html')]
+        generated_pages = [name for name in os.listdir(output_dir) if name.endswith('.html')]
+        assert generated_pages != [], "No pages generated."
         self.logger.info(f"Generated pages: {generated_pages}")
         self.assertEqual(len(generated_pages), expected_pages)
         # Sort generated pages according to the number
@@ -145,13 +148,12 @@ class TestGeneratePages(unittest.TestCase):
 
         # Check if the content of the pages is correct
         for i, page in enumerate(generated_pages):
-            with open(os.path.join(self.test_dir, page), 'r') as f:
+            with open(os.path.join(output_dir, page), 'r') as f:
                 self.logger.info(f"Checking page {i + 1}")
                 html_content = f.read()
                 soup = BeautifulSoup(html_content, 'html.parser')
                 pretty_html = soup.prettify()
                 self.logger.info(f"Page {i + 1}:\n{pretty_html}")
-                next_link = soup.find('a', string='Next')
 
                 # Check if the navigation links are present in the HTML file
                 if expected_pages > 1 and i != 0:

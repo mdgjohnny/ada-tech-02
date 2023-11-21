@@ -1,5 +1,7 @@
-import unittest
+import sys
 import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+import unittest
 import hashlib
 import json
 import random
@@ -12,8 +14,23 @@ import src.config as config
 class TestUtils(unittest.TestCase):
     def setUp(self):
         self.temp_dir = tempfile.mkdtemp()
-        self.config_keys = config.config_keys
-        self.post_keys = config.post_keys
+        self.config_keys = [
+            'posts_directory',
+            'backup_directory',
+            'file_extensions',
+            'blog_title',
+            'author',
+            'description',
+        ]
+        self.post_keys = post_keys = [
+            'id',
+            'type',
+            'tags',
+            'title',
+            'sanitized_title',
+            'last_updated',
+            'content',
+        ]
         logging.basicConfig(level=logging.INFO)
         self.logger = logging.getLogger(__name__)
 
@@ -26,12 +43,12 @@ class TestUtils(unittest.TestCase):
         self.assertTrue(os.path.exists(dir_path))
 
     def test_calculate_hash(self):
+        hash_before_file = handler.calculate_hash(self.temp_dir)
         file_path = os.path.join(self.temp_dir, 'test_file.txt')
         with open(file_path, 'w') as f:
             f.write('test content')
-        calculated_hash = handler.calculate_hash(file_path)
-        expected_hash = hashlib.sha1('test content'.encode()).hexdigest()
-        self.assertEqual(calculated_hash, expected_hash)
+        hash_after_file = handler.calculate_hash(self.temp_dir)
+        self.assertNotEqual(hash_before_file, hash_after_file)
 
     def test_load_and_save_hash(self):
         handler.save_new_hash('test_hash')

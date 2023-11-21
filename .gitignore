@@ -176,6 +176,7 @@ pyrightconfig.json
 
 # Assorted files
 *.txt
+test_post*.html
 
 
 # End of https://www.toptal.com/developers/gitignore/api/python

@@ -1,8 +1,16 @@
 {
-        "blog_title": "A test",
-        "author": "Johnny",
-        "description": "A little project for ADA",
-        "posts_directory": "pages",
-        "backup_directory": "backup",
-        "file_extensions": ["md"]
+    "blog_title": "altamira root",
+    "author": "Johnny",
+    "description": "a chronicle of curiosity",
+    "posts_directory": "static/posts",
+    "template_directory": "templates",
+    "public_directory": "pages",
+    "public_posts_directory": "pages/posts",
+    "backup_directory": "backup",
+    "file_extensions": [
+        "md"
+    ],
+    "hash_filename": "hash.db",
+    "index_template": "index.html",
+    "post_template": "post.html"
 }

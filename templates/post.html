@@ -13,9 +13,7 @@
     <p>{{ post.content|safe }}</p>
     <p>Last updated: {{ post.last_updated }}</p>
     <nav>
-        <a href="{{ navigation_links.index }}">Index</a>
-        <a href="{{ navigation_links.archive }}">Archive</a>
-        <a href="{{ navigation_links.tags }}">Tags</a>
+        <a href="{{ post.tags }}">Tags</a>
     </nav>
 </body>
 </html>

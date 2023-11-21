@@ -1,22 +1,15 @@
-config_file = 'config.json'
-config_keys = [
-    'posts_directory',
-    'backup_directory',
-    'file_extensions',
-    'blog_title',
-    'author',
-    'description',
-]
-post_keys = [
-    'id',
-    'tags',
-    'title',
-    'last_updated',
-    'content',
-]
-template_directory = 'templates'
-template_filename = 'index.html'
-posts_per_page = 10
-posts_dir = 'posts'
-backup_dir = 'backup'
-fallback_extensions = ['.md']
+import os
+from utils.handler import load_config, parse_config
+
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+CONFIG_FILE='config.json'
+CONFIG_PATH = os.path.join(PROJECT_ROOT, CONFIG_FILE)
+config_data = load_config(CONFIG_PATH)
+parsed_config = parse_config(config_data)
+public_dir = parsed_config['public_directory']
+public_posts_dir = parsed_config['public_posts_directory']
+index_template = parsed_config['index_template']
+post_template = parsed_config['post_template']
+file_extensions = parsed_config['file_extensions']
+hash_filename = parsed_config['hash_filename']
+template_directory = parsed_config['template_directory']
