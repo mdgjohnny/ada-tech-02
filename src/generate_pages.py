@@ -32,7 +32,7 @@ HASH_FILENAME = os.path.join(PROJECT_ROOT, parsed_config['hash_filename'])
 TEMPLATE_DIRECTORY = os.path.join(PROJECT_ROOT, parsed_config['template_directory'])
 
 # Set up logging
-logging.basicConfig(level=logging.WARNING)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 def write_page(output_filename, output_html):
@@ -281,7 +281,7 @@ def generate_pages(posts, posts_per_page=5, output_dir=PUBLIC_DIR):
         logger.info(f"Generating index page {page_number} of {total_pages}")
         generate_index_page(page_posts, output_dir, navigation_links)
 
-def make_site(local_posts_directory=LOCAL_POSTS_DIRECTORY, public_dir=PUBLIC_DIR, public_posts_dir=PUBLIC_POSTS_DIR, posts_per_page=5):
+def make_site(local_posts_directory=LOCAL_POSTS_DIRECTORY, public_dir=PUBLIC_DIR, public_posts_dir=PUBLIC_POSTS_DIR, posts_per_page=5, force_rebuild=False):
     """
     Generate the site as a whole.
 
@@ -312,6 +312,8 @@ def make_site(local_posts_directory=LOCAL_POSTS_DIRECTORY, public_dir=PUBLIC_DIR
         logger.error(f"Error making site: {e}")
     except Exception as e:
         logger.error(f"Error making site: {e}")
+
+    print(f"Loaded posts: {posts}")
 
     dirs_to_check = [
         LOCAL_POSTS_DIRECTORY, 
@@ -344,7 +346,7 @@ def make_site(local_posts_directory=LOCAL_POSTS_DIRECTORY, public_dir=PUBLIC_DIR
     if posts is not None:
         # Check if the site has changed
         site_changed = has_site_changed()
-        if site_changed:
+        if site_changed or force_rebuild:
             logger.info("Changes detected. Generating site...")
             # Generating site...
             try:
