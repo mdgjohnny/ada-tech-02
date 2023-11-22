@@ -206,7 +206,8 @@ def generate_index_page(posts, output_dir=PUBLIC_DIR, navigation_links=None):
     print(f"Do we have access to posts.rel_path here?")
     print(f"posts.rel_path: {posts[0]['rel_path']}")
     # Write the output to a file
-    output_filename = os.path.join(output_dir, f'{index}.html')
+    filename = 'index.html' if index == 1 else f'{index}.html'
+    output_filename = os.path.join(output_dir, filename)
     write_page(output_filename, output_html)
     logger.info(f"Generated index page {index} on {output_dir}")
 
@@ -272,7 +273,7 @@ def generate_pages(posts, posts_per_page=5, output_dir=PUBLIC_DIR):
         next_page = None if page_number == total_pages else f'{page_number + 1}.html'
 
         navigation_links = {
-            'index': f'{page_number}',
+            'index': page_number,
             'prev': prev_page,
             'next': next_page,
         }

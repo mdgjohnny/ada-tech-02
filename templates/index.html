@@ -5,88 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-        }
-
-        header {
-            text-align: center;
-            background-color: #007bff;
-            padding: 20px;
-            color: #fff;
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        h1 {
-            margin-bottom: 0;
-        }
-
-        h2 {
-            color: #007bff;
-        }
-
-        a {
-            text-decoration: none;
-            color: #007bff;
-        }
-
-        a:hover {
-            text-decoration: underline;
-        }
-
-        p {
-            color: #666;
-        }
-
-        .pagination {
-            margin-top: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            box-sizing: border-box;
-            padding: 0 20px;
-        }
-
-        .pagination a {
-            color: #007bff;
-            text-decoration: none;
-        }
-
-        .pagination a:hover {
-            text-decoration: underline;
-        }
-
-        /* Responsive styles */
-        @media screen and (max-width: 600px) {
-            body {
-                font-size: 16px;
-            }
-
-            h1 {
-                font-size: 28px;
-            }
-
-            h2 {
-                font-size: 24px;
-            }
-
-            p {
-                font-size: 14px;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="../static/style.css">
     <title>{{ config.blog_title }}</title>
 </head>
 
@@ -96,6 +15,19 @@
         <p>Author: {{ config.author }}</p>
         <p>{{ config.description }}</p>
     </header>
+
+
+<body>
+    <header>
+        <h1>{{ config.blog_title }}</h1>
+        <p>Author: {{ config.author }}</p>
+        <p>{{ config.description }}</p>
+    </header>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+    </nav>
 
     {% for post in posts %}
         <h2><a href="{{ post.rel_path }}">{{ post.title }}</a></h2>
@@ -109,7 +41,7 @@
             {% if navigation_links.prev is not none %}
                 <a href="{{ navigation_links.prev }}">Previous</a>
             {% endif %}
-            <span>Page {{ navigation_links.page }}</span>
+            <span>Page {{ navigation_links.index }}</span>
             {% if navigation_links.next is not none %}
                 <a href="{{ navigation_links.next }}">Next</a>
             {% endif %}
