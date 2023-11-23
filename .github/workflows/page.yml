@@ -23,7 +23,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run script
-        run: python src/main.py
+        run: python src/main.py --force-rebuild --verbose
         env:
             PYTHONPATH: ${{ github.workspace }}/src, ${{ github.workspace }}/src/utils
 

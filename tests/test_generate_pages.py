@@ -15,9 +15,6 @@ from src.generate_pages import (generate_pages, generate_post, get_template,
 
 sys.path.insert(0, os.path.abspath(
     os.path.join(os.path.dirname(__file__), "..")))
-# print sys path
-print(sys.path)
-
 
 INDEX_TEMPLATE = parsed_config['index_template']
 
