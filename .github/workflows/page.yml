@@ -21,11 +21,15 @@ jobs:
         run: |
             python -m pip install --upgrade pip
             pip install -r requirements.txt
+      - name: Set python path and test with unittest
+        run: |
+            echo "PYTHONPATH=./src" >> $GITHUB_ENV
+            echo "PYTHONPATH"=./src/utils >> $GITHUBENV
+            echo "PYTHONPATH"=./tests >> $GITHUBENV
+            python -m unittest
 
       - name: Run script #run main.py
         run: python src/main.py --force-rebuild --verbose
-        env:
-            PYTHONPATH: ${{ github.workspace }}/src, ${{ github.workspace }}/src/utils
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
