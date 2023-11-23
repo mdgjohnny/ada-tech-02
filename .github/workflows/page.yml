@@ -26,6 +26,7 @@ jobs:
             echo "PYTHONPATH=./src" >> $GITHUB_ENV
             echo "PYTHONPATH"=./src/utils >> $GITHUB_ENV
             echo "PYTHONPATH"=./tests >> $GITHUB_ENV
+            echo $GITHUB_ENV
             python -m unittest
 
       - name: Run script #run main.py
