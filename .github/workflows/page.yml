@@ -24,8 +24,8 @@ jobs:
       - name: Set python path and test with unittest
         run: |
             echo "PYTHONPATH=./src" >> $GITHUB_ENV
-            echo "PYTHONPATH"=./src/utils >> $GITHUBENV
-            echo "PYTHONPATH"=./tests >> $GITHUBENV
+            echo "PYTHONPATH"=./src/utils >> $GITHUB_ENV
+            echo "PYTHONPATH"=./tests >> $GITHUB_ENV
             python -m unittest
 
       - name: Run script #run main.py
