@@ -1,6 +1,7 @@
 {
     "blog_title": "altamira root",
     "author": "Johnny",
+    "email": "mdgjohnny@gmail.com",
     "description": "a chronicle of curiosity",
     "posts_directory": "static/posts",
     "template_directory": "templates",
@@ -12,5 +13,6 @@
     ],
     "hash_filename": "hash.json",
     "index_template": "index.html",
-    "post_template": "post.html"
+    "post_template": "post.html",
+    "default_template": "default.html"
 }

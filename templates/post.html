@@ -1,27 +1,49 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="static/style.css">
-    <title>{{ post.title }}</title>
-</head>
-<body>
-    <header>
-        <h1>{{ post.title }}</h1>
-        <p>Author: {{ config.author }}</p>
-    </header>
+{% extends "default.html" %}
 
+{% block title %}{{ post.title }} - {{ config.blog_title }}{% endblock %}
+{% block styles %}
+{% if post.type == 'post' %}
+    <link rel="stylesheet" href="../../static/style.css">
+{% else %}
+    <link rel="stylesheet" href="../static/style.css">
+{% endif %}
+{% endblock %}
+{% block card %}
+{% endblock %}
+{% block nav %}
+    {% if post.type == 'post' %}
     <nav>
-        <a href="index.html">Home</a>
-        <a href="about.html">About</a>
+       <ul>
+          <li><a href="../index.html">Home</a></li>
+          <li><a href="../about.html">About</a></li>
+       </ul>
     </nav>
+    {% else %}
+    <nav>
+       <ul>
+          <li><a href="./index.html">Home</a></li>
+          <li><a href="./about.html">About</a></li>
+       </ul>
+    </nav>
+    {% endif %}
+{% endblock %}
+{% block content %}
+    {% if post is defined %}
+        <article>
+            <header>
+            	{% if post.type == 'post' %}
+                <h2>{{ post.title }}</h2>
+                {% endif %}
+            </header>
+            <div class="content" id="content">
+                {{ post.content|safe }}
+            </div>
+            <footer>
+                <p>Last updated: {{ post.last_updated }}</p>
+            </footer>
+        </article>
+    {% else %}
+        <p>Post not found.</p>
+    {% endif %}
+{% endblock %}
 
-    <p>{{ post.content|safe }}</p>
-    <p>Last updated: {{ post.last_updated }}</p>
-    <nav>
-        <a href="{{ post.tags }}">Tags</a>
-    </nav>
-</body>
-</html>

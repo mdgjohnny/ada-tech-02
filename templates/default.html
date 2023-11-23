@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href='https://fonts.googleapis.com/css?family=Inter' rel='stylesheet'>
+    {% block styles %}<link rel="stylesheet" href="../static/style.css">{% endblock %}
+    <title>{% block title %}{{ config.blog_title }}{% endblock %}</title>
+</head>
+<header>
+{% block nav %}
+{% endblock %}
+</header>
+<body>
+   <main>
+   {% block card %}
+    <h1>{{ config.blog_title }}</h1>
+    <h2>{{ config.description }}</h2>
+   {% endblock %}
+    {% block content %}
+    {% endblock %}
+    </main>    
+    {% block footer %}
+    <footer>
+        <section id="footer-text">
+            {% if navigation_links is not none %}
+                {% if navigation_links.prev is not none %}
+                    <a href="{{ navigation_links.prev }}">Previous</a>
+                {% endif %}
+                {% if navigation_links.index > 1 %}
+                <span>Page {{ navigation_links.index }}</span>
+                {% endif %}
+                {% if navigation_links.next is not none %}
+                    <a href="{{ navigation_links.next }}">Next</a>
+                {% endif %}
+            {% endif %}
+            <p>
+                Maintained by Johnny Miranda at <a href="mailto:{{ config.email }}">&lt;{{ config.email }}&gt;</a>
+            </p>
+        </section>
+    </footer>
+    {% endblock %}
+
+
+</body>
+</html>
+

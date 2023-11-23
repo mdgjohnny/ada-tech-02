@@ -1,54 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "default.html" %}
+{% block nav %}
+<nav>
+    <ul>
+      <li><a href="./index.html">Home</a></li>
+      <li><a href="./about.html">About</a></li>
+    </ul>
+</nav>
+{% endblock %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../static/style.css">
-    <title>{{ config.blog_title }}</title>
-</head>
-
-<body>
-    <header>
-        <h1>{{ config.blog_title }}</h1>
-        <p>Author: {{ config.author }}</p>
-        <p>{{ config.description }}</p>
-    </header>
-
-
-<body>
-    <header>
-        <h1>{{ config.blog_title }}</h1>
-        <p>Author: {{ config.author }}</p>
-        <p>{{ config.description }}</p>
-    </header>
-
-    <nav>
-        <a href="index.html">Home</a>
-        <a href="about.html">About</a>
-    </nav>
-
+{% block content %}
+<dl class="recent-posts">
+<h2>Recent posts</h2>
     {% for post in posts %}
-        <h2><a href="{{ post.rel_path }}">{{ post.title }}</a></h2>
-        {{ post.content|safe }}
-        <!-- Last updated timestamp -->
-        <p>Last updated: {{ post.last_updated }}</p>
+        <dt>{{ post.last_updated}} <a href="{{ post.rel_path }}">{{ post.title }}</a></dt>
+        <dd>{{ post.synopsis|safe }}</dd>
     {% endfor %}
-
-    <div class="pagination">
-        {% if navigation_links is not none %}
-            {% if navigation_links.prev is not none %}
-                <a href="{{ navigation_links.prev }}">Previous</a>
-            {% endif %}
-            <span>Page {{ navigation_links.index }}</span>
-            {% if navigation_links.next is not none %}
-                <a href="{{ navigation_links.next }}">Next</a>
-            {% endif %}
-        {% endif %}
-    </div>
-</body>
-
-</html>
-
+</dl>
+{% endblock %}
 

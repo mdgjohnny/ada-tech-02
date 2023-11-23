@@ -24,6 +24,8 @@ jobs:
 
       - name: Run script
         run: python src/main.py
+        env:
+            PYTHONPATH: ${{ github.workspace }}/src, ${{ github.workspace }}/src/utils
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3

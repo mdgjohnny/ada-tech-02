@@ -1,15 +1,15 @@
-import sys
 import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-import unittest
 import hashlib
 import json
-import random
-import shutil
-import tempfile
 import logging
-import src.utils.handler as handler
+import shutil
+import sys
+import tempfile
+import unittest
+
 import src.config as config
+import src.utils.handler as handler
+
 
 class TestUtils(unittest.TestCase):
     def setUp(self):
@@ -57,7 +57,6 @@ class TestUtils(unittest.TestCase):
         for key in self.config_keys:
             self.assertIn(key, config_data)
 
-
     def test_parse_config(self):
         config_data = {'file_extensions': ['txt', 'md']}
         parsed_config = handler.parse_config(config_data)
@@ -66,4 +65,5 @@ class TestUtils(unittest.TestCase):
     def test_extract_metadata(self):
         post_content = '---\ntitle: Test Post\ntags: [test, example]\n---\nContent'
         metadata = handler.extract_metadata(post_content)
-        self.assertEqual(metadata, {'title': 'Test Post', 'tags': '[test, example]'})
+        self.assertEqual(
+            metadata, {'title': 'Test Post', 'tags': ['test', 'example']})
