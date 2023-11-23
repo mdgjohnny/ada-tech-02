@@ -56,10 +56,25 @@ jobs:
           uses: actions/upload-pages-artifact@v2
           with:
             # Upload entire repository
-            path: |
-              pages
-              static/images
-  
+            path:
+                "pages"
         - name: Deploy to GitHub Pages
           id: deployment
-          uses: actions/deploy-pages@v2
+          uses: actions/deploy
+          with:
+            # GitHub token
+            token: ${{ secrets.GITHUB_TOKEN }}
+            # Target repository
+            repository: ${{ github.repository }}
+            # Target branch
+            branch: main
+            # Folder to deploy
+            folder: pages
+            # Commit message
+            commit_message: Deploy ${{ github.sha }}
+            # Commit author name
+            commit_author: ${{ github.actor }}
+            # Commit author email
+            commit_email: ${{ github.actor }}@users.noreply.github.com
+            # Force push to the target branch
+            force: true
