@@ -40,41 +40,25 @@ jobs:
               PWD=$(pwd)
               export PYTHONPATH=$PWD/src:$PWD/tests:$PWD/utils:$PYTHONPATH
               python src/main.py --force-rebuild --verbose
-  
     deploy:
-      needs: build
-      runs-on: ubuntu-latest
-  
-      steps:
-        - name: Checkout repository
+        environment:
+          name: github-pages
+          url: ${{ steps.deployment.outputs.page_url }}
+        runs-on: ubuntu-latest
+        steps:
+        - name: Checkout
           uses: actions/checkout@v3
-  
         - name: Setup Pages
           uses: actions/configure-pages@v3
-  
         - name: Upload artifact
           uses: actions/upload-pages-artifact@v2
           with:
             # Upload entire repository
-            path:
-                "pages"
+            path: '.'
         - name: Deploy to GitHub Pages
           id: deployment
-          uses: actions/deploy
+          uses: actions/deploy-pages@v2
           with:
-            # GitHub token
-            token: ${{ secrets.GITHUB_TOKEN }}
-            # Target repository
-            repository: ${{ github.repository }}
-            # Target branch
             branch: main
-            # Folder to deploy
-            folder: pages
-            # Commit message
-            commit_message: Deploy ${{ github.sha }}
-            # Commit author name
-            commit_author: ${{ github.actor }}
-            # Commit author email
-            commit_email: ${{ github.actor }}@users.noreply.github.com
-            # Force push to the target branch
-            force: true
+            path: 'pages'
+            token: ${{ secrets.GITHUB_TOKEN }}
