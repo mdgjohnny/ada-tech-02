@@ -19,6 +19,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+            echo "----INSTALL DEPENDENCIES------"
             python -m pip install --upgrade pip
             pip install -r requirements.txt
 
@@ -31,7 +32,12 @@ jobs:
             python -m unittest
 
       - name: Run script #run main.py
-        run: python src/main.py --force-rebuild --verbose
+        run: |
+            echo "---RUN MAIN.PY---"
+            echo "Setting PYTHONPATH"
+            PWD=$(pwd)
+            export PYTHONPATH=$PWD/src:$PWD/tests:$PWD/utils:$PYTHONPATH
+            python src/main.py --force-rebuild --verbose
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
