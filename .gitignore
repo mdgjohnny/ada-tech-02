@@ -175,7 +175,6 @@ pyrightconfig.json
 
 
 # Assorted files
-*.txt
 test_post*.html
 .pylintrc
 
