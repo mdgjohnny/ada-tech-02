@@ -1,47 +1,65 @@
 name: Generate Pages and Deploy to GitHub Pages
 
 on:
-  push:
-    branches:
-      - main
-  workflow_dispatch:
+    push:
+        branches: ["main"]
+    workflow_dispatch:
+
 jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.11
-
-      - name: Install dependencies
-        run: |
-            echo "----INSTALL DEPENDENCIES------"
-            python -m pip install --upgrade pip
-            pip install -r requirements.txt
-
-      - name: Set python path and test with unittest
-        run: |
-            echo "----PYTHONPATH------"
-            PWD=$(pwd)
-            export PYTHONPATH=$PWD/src:$PWD/tests:$PWD/utils:$PYTHONPATH
-            echo "PYTHONPATH=$PYTHONPATH"
-            python -m unittest
-
-      - name: Run script #run main.py
-        run: |
-            echo "---RUN MAIN SCRIPT---"
-            echo "Setting PYTHONPATH"
-            PWD=$(pwd)
-            export PYTHONPATH=$PWD/src:$PWD/tests:$PWD/utils:$PYTHONPATH
-            python src/main.py --force-rebuild --verbose
-
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ${{ github.workspace}}/pages
+    
+    build:
+      runs-on: ubuntu-latest
+  
+      steps:
+        - name: Checkout repository
+          uses: actions/checkout@v3
+  
+        - name: Set up Python
+          uses: actions/setup-python@v4
+          with:
+            python-version: 3.11
+  
+        - name: Install dependencies
+          run: |
+              echo "----INSTALL DEPENDENCIES------"
+              python -m pip install --upgrade pip
+              pip install -r requirements.txt
+  
+        - name: Set python path and test with unittest
+          run: |
+              echo "----PYTHONPATH------"
+              PWD=$(pwd)
+              export PYTHONPATH=$PWD/src:$PWD/tests:$PWD/utils:$PYTHONPATH
+              echo "PYTHONPATH=$PYTHONPATH"
+              python -m unittest
+  
+        - name: Run script #run main.py
+          run: |
+              echo "---RUN MAIN SCRIPT---"
+              echo "Setting PYTHONPATH"
+              PWD=$(pwd)
+              export PYTHONPATH=$PWD/src:$PWD/tests:$PWD/utils:$PYTHONPATH
+              python src/main.py --force-rebuild --verbose
+  
+    deploy:
+      needs: build
+      runs-on: ubuntu-latest
+  
+      steps:
+        - name: Checkout repository
+          uses: actions/checkout@v3
+  
+        - name: Setup Pages
+          uses: actions/configure-pages@v3
+  
+        - name: Upload artifact
+          uses: actions/upload-pages-artifact@v2
+          with:
+            # Upload entire repository
+            path: |
+              pages
+              static/images
+  
+        - name: Deploy to GitHub Pages
+          id: deployment
+          uses: actions/deploy-pages@v2
