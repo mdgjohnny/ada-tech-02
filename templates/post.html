@@ -3,9 +3,9 @@
 {% block title %}{{ post.title }} - {{ config.blog_title }}{% endblock %}
 {% block styles %}
 {% if post.type == 'post' %}
-    <link rel="stylesheet" href="../../static/style.css">
-{% else %}
     <link rel="stylesheet" href="../static/style.css">
+ {% else %}
+    <<link rel="stylesheet" href="static/style.css">
 {% endif %}
 {% endblock %}
 {% block card %}
