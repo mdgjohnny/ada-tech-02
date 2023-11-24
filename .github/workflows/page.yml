@@ -65,4 +65,5 @@ jobs:
           uses: actions/deploy-pages@v2
           with:
             branch: main
+            folder: pages
             token: ${{ secrets.GITHUB_TOKEN }}
