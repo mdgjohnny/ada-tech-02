@@ -12,7 +12,17 @@ from exceptions import (
     BlogDirectoryNotFoundError,
     BlogTemplateError,
 )
-from config import parsed_config
+from src.config import (
+    PROJECT_ROOT,
+    LOCAL_POSTS_DIRECTORY,
+    PUBLIC_DIR,
+    PUBLIC_POSTS_DIR,
+    INDEX_TEMPLATE,
+    POST_TEMPLATE,
+    HASH_FILENAME,
+    TEMPLATE_DIRECTORY,
+    parsed_config,
+)
 from src.utils.handler import (
     calculate_hash,
     create_directory,
@@ -23,16 +33,6 @@ from src.utils.handler import (
     sanitize_title,
     save_new_hash,
 )
-
-PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-LOCAL_POSTS_DIRECTORY = os.path.join(PROJECT_ROOT, parsed_config["posts_directory"])
-PUBLIC_DIR = os.path.join(PROJECT_ROOT, parsed_config["public_directory"])
-PUBLIC_POSTS_DIR = os.path.join(PROJECT_ROOT, parsed_config["public_posts_directory"])
-INDEX_TEMPLATE = parsed_config["index_template"]
-POST_TEMPLATE = parsed_config["post_template"]
-DEFAULT_TEMPLATE = parsed_config["default_template"]
-HASH_FILENAME = os.path.join(PROJECT_ROOT, parsed_config["hash_filename"])
-TEMPLATE_DIRECTORY = os.path.join(PROJECT_ROOT, parsed_config["template_directory"])
 
 # Set up logging
 logging.basicConfig(level=logging.ERROR)
@@ -48,8 +48,9 @@ def write_page(output_filename, output_html):
         output_html (str): The HTML to write to the output file.
     """
     output_dir = os.path.dirname(output_filename)
+    output_target = os.path.join(PROJECT_ROOT, output_dir)
     logger.info(f"Writing {output_filename} on {output_dir}")
-    create_directory(output_dir)
+    create_directory(output_target)
     with open(output_filename, "w") as output_file:
         output_file.write(output_html)
 
@@ -114,7 +115,8 @@ def process_post(file_path):
             # If post is uncategorized, generate it in the public directory
             # Get the relative path from public_dir to the post file
             post_rel_path = os.path.relpath(
-                os.path.join(PUBLIC_DIR, f'{post["sanitized_title"]}.html'), PUBLIC_DIR
+                os.path.join(PUBLIC_DIR, f'{post["sanitized_title"]}.html'), 
+                PUBLIC_DIR
             )
             post["rel_path"] = post_rel_path
 
@@ -216,6 +218,7 @@ def generate_all_posts(posts, public_dir=PUBLIC_DIR, public_posts_dir=PUBLIC_POS
         try:
             for post in posts:
                 logger.info(f"Generating post {post['id']}")
+                logger.info(f"Writing to {public_posts_dir}")
                 if post["type"] == "post":
                     # Defaults to public_dir/public_posts_dir
                     generate_post(post, public_posts_dir)
@@ -296,6 +299,8 @@ def make_site(
         """
         hashes = {}
         for directory in dirs:
+            assert os.path.exists(directory), f"Directory {directory} not found."
+            logger.info(f"Calculating hash for {directory}")
             hashes[directory] = calculate_hash(directory)
         return hashes
 

@@ -5,9 +5,8 @@
     "description": "a chronicle of curiosity",
     "posts_directory": "static/posts",
     "template_directory": "templates",
-    "public_directory": "pages",
-    "public_posts_directory": "pages/posts",
-    "backup_directory": "backup",
+    "public_directory": "",
+    "public_posts_directory": "posts",
     "file_extensions": [
         "md"
     ],

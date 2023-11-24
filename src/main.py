@@ -1,7 +1,7 @@
 import argparse
 import logging
 import os
-from config import parsed_config
+import config
 from generate_pages import make_site
 
 # Set up logging
@@ -10,9 +10,6 @@ logger = logging.getLogger(__name__)
 
 
 def main():
-    LOCAL_POSTS_DIRECTORY = parsed_config["posts_directory"]
-    PUBLIC_DIR = parsed_config["public_directory"]
-    PUBLIC_POSTS_DIR = parsed_config["public_posts_directory"]
 
     parser = argparse.ArgumentParser(
         description="Generate a static site from Markdown files."
@@ -21,21 +18,21 @@ def main():
         "--posts-directory",
         "-p",
         type=str,
-        default=LOCAL_POSTS_DIRECTORY,
+        default=config.LOCAL_POSTS_DIRECTORY,
         help="The directory where the blog posts are stored before publishing.",
     )
     parser.add_argument(
         "--public-directory",
         "-o",
         type=str,
-        default=PUBLIC_DIR,
+        default=config.PUBLIC_DIR,
         help="The directory where the uncategorized posts should be stored.",
     )
     parser.add_argument(
         "--public-posts-directory",
         "-i",
         type=str,
-        default=PUBLIC_POSTS_DIR,
+        default=config.PUBLIC_POSTS_DIR,
         help="The directory where the individual posts should be stored.",
     )
     parser.add_argument(
@@ -59,7 +56,7 @@ def main():
     )
 
     args = parser.parse_args()
-    
+
     if args.verbose:
         logging.getLogger().setLevel(logging.INFO)
         print("Verbose logging enabled.")
@@ -79,8 +76,7 @@ def main():
         )
     except Exception as e:
         logger.error(f"An exception occurred while generating the site: {e}")
-
-    logger.info(f"Site generated successfully.")
+        raise e
 
 if __name__ == "__main__":
     main()
