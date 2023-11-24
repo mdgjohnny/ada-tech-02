@@ -16,7 +16,6 @@ class TestUtils(unittest.TestCase):
         self.temp_dir = tempfile.mkdtemp()
         self.config_keys = [
             'posts_directory',
-            'backup_directory',
             'file_extensions',
             'blog_title',
             'author',
